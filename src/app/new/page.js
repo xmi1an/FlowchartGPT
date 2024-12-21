@@ -32,20 +32,7 @@ export default function NewFlowchartPage() {
   }, []);
 
   return (
-    <div className="relative min-h-screen bg-gray-100">
-      {/* Background Animation */}
-      <div className="absolute inset-0 overflow-hidden">
-        <motion.div
-          className="absolute top-0 left-0 w-full h-full"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
-        >
-          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-blue-500 to-purple-500 opacity-10 animate-pulse"></div>
-          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-blue-400 to-purple-400 opacity-10 animate-pulse"></div>
-        </motion.div>
-      </div>
-
+    <div className="relative min-h-screen bg-blue-50">
       {/* Main Content */}
       <div className="relative z-10 container mx-auto px-4 py-8">
         <Editor />

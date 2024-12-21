@@ -1,90 +1,145 @@
 // src/components/flowchart/Toolbar.js
 'use client';
 
+import { motion } from 'framer-motion';
 import { 
-  ZoomIn, ZoomOut, RotateCcw, Download, Copy, 
-  Grid, Move, Save, Undo, Redo 
+  ZoomIn, ZoomOut, RotateCcw, Download, Grid, ArrowLeft, 
+  Plus, Lightbulb, MessageSquare, Terminal, Code2
 } from 'lucide-react';
 
 export function Toolbar({ 
   onZoom, 
   onReset, 
-  onDownload,
+  onExport, 
   onToggleGrid,
-  showGrid,
+  onBack,
   scale,
-  onUndo,
-  onRedo,
-  canUndo,
-  canRedo
+  showGrid,
+  onAddNode,
+  onExplain,
+  onViewMermaid,
+  onViewPseudocode,
+  showSummary,
+  summaryLoading,
+  onToggleChat
 }) {
-  const tools = [
-    {
-      group: 'zoom',
-      items: [
-        { icon: <ZoomIn size={20} />, action: () => onZoom(0.1), label: 'Zoom In' },
-        { icon: <ZoomOut size={20} />, action: () => onZoom(-0.1), label: 'Zoom Out' },
-        { icon: <RotateCcw size={20} />, action: onReset, label: 'Reset View' }
-      ]
-    },
-    {
-      group: 'edit',
-      items: [
-        { icon: <Undo size={20} />, action: onUndo, label: 'Undo', disabled: !canUndo },
-        { icon: <Redo size={20} />, action: onRedo, label: 'Redo', disabled: !canRedo }
-      ]
-    },
-    {
-      group: 'view',
-      items: [
-        { 
-          icon: <Grid size={20} />, 
-          action: onToggleGrid, 
-          label: 'Toggle Grid',
-          active: showGrid 
-        },
-        { icon: <Move size={20} />, label: 'Drag to Move', mode: true }
-      ]
-    },
-    {
-      group: 'export',
-      items: [
-        { icon: <Save size={20} />, action: onDownload, label: 'Save as PDF' }
-      ]
-    }
-  ];
-
   return (
-    <div className="bg-white border rounded-lg shadow-sm p-1 flex gap-2">
-      {tools.map((group, groupIndex) => (
-        <div key={group.group} className="flex items-center">
-          {groupIndex > 0 && <div className="w-px h-8 bg-gray-200 mx-2" />}
-          <div className="flex gap-1">
-            {group.items.map((tool) => (
-              <button
-                key={tool.label}
-                onClick={tool.action}
-                disabled={tool.disabled}
-                className={`p-2 rounded-md hover:bg-gray-100 transition-colors relative group
-                  ${tool.active ? 'bg-gray-100' : ''}
-                  ${tool.disabled ? 'opacity-50 cursor-not-allowed' : ''}
-                `}
-              >
-                {tool.icon}
-                <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs bg-gray-800 text-white rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                  {tool.label}
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
-      ))}
-      
-      <div className="ml-auto flex items-center gap-2 pr-2">
-        <span className="text-sm text-gray-500">
+    <motion.div 
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="bg-white border rounded-lg shadow-sm p-1.5 flex items-center gap-2"
+    >
+      {/* Left side buttons */}
+      <button
+        onClick={onBack}
+        className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+        title="Back to Editor"
+      >
+        <ArrowLeft size={20} />
+      </button>
+
+      <div className="w-px h-8 bg-gray-200" />
+
+      <div className="flex items-center gap-1">
+        <button
+          onClick={() => onZoom(0.1)}
+          className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+          title="Zoom In"
+        >
+          <ZoomIn size={20} />
+        </button>
+        <button
+          onClick={() => onZoom(-0.1)}
+          className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+          title="Zoom Out"
+        >
+          <ZoomOut size={20} />
+        </button>
+        <span className="px-3 text-sm text-gray-500 min-w-[60px] text-center font-medium">
           {Math.round(scale * 100)}%
         </span>
+        <button
+          onClick={onReset}
+          className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+          title="Reset View"
+        >
+          <RotateCcw size={20} />
+        </button>
       </div>
-    </div>
+
+      <div className="w-px h-8 bg-gray-200" />
+
+      <div className="flex items-center gap-1">
+        <button
+          onClick={onAddNode}
+          className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+          title="Add Node"
+        >
+          <Plus size={20} />
+        </button>
+        <button
+          onClick={onToggleGrid}
+          className={`p-2 rounded-md transition-colors ${showGrid ? 'bg-gray-100' : 'hover:bg-gray-100'}`}
+          title="Toggle Grid"
+        >
+          <Grid size={20} />
+        </button>
+      </div>
+
+      <div className="w-px h-8 bg-gray-200" />
+
+      <div className="flex items-center gap-1">
+        <button
+          onClick={onExport}
+          className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+          title="Export as SVG"
+        >
+          <Download size={20} />
+        </button>
+      </div>
+
+      {/* Right side buttons */}
+      <div className="ml-auto flex items-center gap-2">
+        <button
+          onClick={onExplain}
+          disabled={summaryLoading}
+          className={`flex items-center gap-2 px-3 py-1.5 rounded-md transition-colors ${
+            summaryLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'
+          }`}
+          title="Explain Flowchart"
+        >
+          <Lightbulb size={18} />
+          <span className="text-sm">Explain</span>
+        </button>
+
+        <button
+          onClick={onViewMermaid}
+          className="flex items-center gap-2 px-3 py-1.5 hover:bg-gray-100 rounded-md transition-colors"
+          title="View Mermaid Syntax"
+        >
+          <Code2 size={18} />
+          <span className="text-sm">Mermaid</span>
+        </button>
+
+        <button
+          onClick={onViewPseudocode}
+          className="flex items-center gap-2 px-3 py-1.5 hover:bg-gray-100 rounded-md transition-colors"
+          title="View Pseudocode"
+        >
+          <Terminal size={18} />
+          <span className="text-sm">Pseudocode</span>
+        </button>
+
+        <div className="w-px h-8 bg-gray-200" />
+
+        <button
+          onClick={onToggleChat}
+          className="flex items-center gap-2 px-3 py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+        >
+          <MessageSquare size={18} />
+          <span className="text-sm font-medium">Chat with AI</span>
+        </button>
+      </div>
+    </motion.div>
   );
 }
