@@ -70,6 +70,18 @@ export function NodeEditor({ node, onUpdate, onClose }) {
     setEditedNode(updated);
   };
 
+  const applyChanges = () => {
+    // Validate required fields
+    if (!editedNode.text?.trim()) {
+      editedNode.text = 'New Node';
+    }
+    if (!editedNode.fontSize || editedNode.fontSize < 12) {
+      editedNode.fontSize = 14;
+    }
+    
+    onUpdate(editedNode);
+  };
+
   return (
     <motion.div 
       initial={{ opacity: 0 }}
@@ -178,10 +190,7 @@ export function NodeEditor({ node, onUpdate, onClose }) {
               Cancel
             </button>
             <button
-              onClick={() => {
-                onUpdate(editedNode);
-                onClose();
-              }}
+              onClick={applyChanges}
               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
               Apply Changes
