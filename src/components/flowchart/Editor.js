@@ -8,7 +8,6 @@ import { toast } from 'react-hot-toast';
 import { FlowchartViewer } from './FlowchartViewer';
 import mermaid from 'mermaid';
 
-// Add AI conversation messages
 const AI_MESSAGES = [
   "I can help you create any type of flowchart. What would you like to visualize?",
   "Need help organizing a process? I'm here to help!",
@@ -24,7 +23,6 @@ const conversationalPrompts = [
   "Map out a customer support workflow",
   "Create a simple data backup process"
 ];
-
 export function Editor() {
   const [prompt, setPrompt] = useState('');
   const [flowchartCode, setFlowchartCode] = useState('');
@@ -57,11 +55,12 @@ export function Editor() {
       if (!response.ok) throw new Error('Failed to generate flowchart');
       
       const data = await response.json();
-      console.log('Generated flowchart:', data); // Debug log
       
       if (data.mermaidCode) {
         setFlowchartCode(data.mermaidCode);
         setShowFlowchart(true);
+        // Save prompt to localStorage after successful generation
+        localStorage.setItem('lastFlowchartPrompt', prompt);
         toast.success('Flowchart created successfully!');
       } else {
         throw new Error('Invalid response format');
@@ -74,7 +73,6 @@ export function Editor() {
       setLoading(false);
     }
   };
-
   const handlePromptChange = (e) => {
     setPrompt(e.target.value);
     if (e.target.value.length % 50 === 0) {
@@ -82,7 +80,6 @@ export function Editor() {
     }
   };
 
-  // If flowchart is generated, show the viewer
   if (showFlowchart && flowchartCode) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -90,12 +87,12 @@ export function Editor() {
           code={flowchartCode}
           config={config}
           onBack={() => setShowFlowchart(false)}
+          onChange={(newCode) => setFlowchartCode(newCode)}
         />
       </div>
     );
   }
 
-  // Show the input form
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -104,7 +101,6 @@ export function Editor() {
         </div>
 
         <div className="lg:col-span-3 space-y-6">
-          {/* Input Section */}
           <div className="bg-white rounded-xl shadow-sm p-6">
             <div className="flex items-center gap-3 mb-4">
               <MessageSquare className="text-blue-500" />
@@ -164,7 +160,6 @@ export function Editor() {
         </div>
       </div>
 
-      {/* Loading Overlay */}
       {loading && (
         <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-xl p-6 max-w-sm w-full mx-4">

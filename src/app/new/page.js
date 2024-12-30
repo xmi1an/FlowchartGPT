@@ -1,4 +1,3 @@
-// src/app/new/page.js
 'use client';
 
 import { Editor } from '@/components/flowchart/Editor';
@@ -31,11 +30,20 @@ export default function NewFlowchartPage() {
     return () => clearInterval(interval);
   }, []);
 
+  const handleFlowchartGenerate = (prompt) => {
+    // Save the initial prompt to localStorage
+    try {
+      localStorage.setItem('lastFlowchartPrompt', prompt);
+    } catch (error) {
+      console.error('Error saving prompt:', error);
+    }
+  };
+
   return (
     <div className="relative min-h-screen bg-blue-50">
       {/* Main Content */}
       <div className="relative z-10 container mx-auto px-4 py-8">
-        <Editor />
+        <Editor onFlowchartGenerate={handleFlowchartGenerate} />
       </div>
 
       {/* Dynamic Facts Carousel */}
