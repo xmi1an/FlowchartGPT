@@ -5,11 +5,13 @@ import mermaid from 'mermaid';
 import { 
   ZoomIn, ZoomOut, RotateCcw, Download, Grid, ArrowLeft, 
   Plus, Lightbulb, Code2, FileCode, Square, Circle, Diamond, 
-  Hexagon, X, MessageSquare, Terminal, Image, Wand2
+  Hexagon, X, MessageSquare, Terminal, Image
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import { themeColors } from '@/utils/theme';
+import { NodeEditor } from './NodeEditor';
+import { SideSummary } from './SideSummary';
 import { ChatWidget } from './ChatWidget';
 
 const nodeTypes = [
