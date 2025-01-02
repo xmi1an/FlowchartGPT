@@ -1,6 +1,7 @@
 // src/app/api/generate-flowchart/route.js
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
+import { analyzeMermaidCode, modifyFlowchart } from '@/utils/mermaidUtils';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
@@ -37,6 +38,54 @@ export async function POST(request) {
     const { prompt, config, type, currentFlowchart } = await request.json();
     console.log('Request type:', type);
 
+    // Handle edit requests
+    if (type === 'edit') {
+      try {
+        // First try to directly modify the flowchart based on the prompt
+        const simpleCompletion = await openai.chat.completions.create({
+          model: "gpt-4o",
+          messages: [
+            {
+              role: "system",
+              content: `You are a Mermaid.js expert. Given an existing flowchart and an edit request:
+              1. Understand the current flowchart structure
+              2. Apply the requested changes while maintaining valid syntax
+              3. Return ONLY the complete modified Mermaid code
+              4. Ensure the code starts with 'graph'
+              5. Keep node IDs consistent where possible
+              6. Preserve existing styling and layout
+              7. Return valid Mermaid.js syntax only`
+            },
+            {
+              role: "user",
+              content: `Current flowchart:\n${currentFlowchart}\n\nRequested changes:\n${prompt}`
+            }
+          ],
+          temperature: 0.3,
+          max_tokens: 1500
+        });
+
+        let modifiedCode = simpleCompletion.choices[0].message.content.trim();
+        
+        // Ensure the response starts with 'graph'
+        if (!modifiedCode.startsWith('graph')) {
+          const graphIndex = modifiedCode.indexOf('graph');
+          if (graphIndex !== -1) {
+            modifiedCode = modifiedCode.substring(graphIndex);
+          } else {
+            throw new Error('Invalid flowchart format received');
+          }
+        }
+        
+        return NextResponse.json({ mermaidCode: modifiedCode });
+      } catch (editError) {
+        console.error('Edit error:', editError);
+        return NextResponse.json(
+          { error: 'Could not process edit request. Please try rephrasing.' },
+          { status: 500 }
+        );
+      }
+    }
     // Handle chat/ideation requests
     if (type === 'chat') {
       const chatCompletion = await openai.chat.completions.create({

@@ -44,25 +44,55 @@ const nodeTypes = [
     example: '{{Prepare Data}}'
   }
 ];
-function EditPromptModal({ isOpen, onClose, initialPrompt = '', onSubmit }) {
-  const [prompt, setPrompt] = useState(initialPrompt);
+
+function ExportMenu({ onExport, onClose }) {
+  const exportOptions = [
+    { format: 'svg', label: 'SVG Vector' },
+    { format: 'jpg', label: 'JPG Image' }
+  ];
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      className="absolute right-0 top-12 bg-white rounded-lg shadow-lg border border-gray-200 py-2 w-48 z-50 pointer-events-auto"
+    >
+      {exportOptions.map(({ format, label }) => (
+        <button
+          key={format}
+          onClick={(e) => {
+            e.stopPropagation();
+            onExport(format);
+            onClose();
+          }}
+          className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+        >
+          <Download size={16} />
+          {label}
+        </button>
+      ))}
+    </motion.div>
+  );
+}
+function EditPromptModal({ isOpen, onClose, onSubmit }) {
+  const [prompt, setPrompt] = useState('');
   const [isDragging, setIsDragging] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
-  const savedPrompt = localStorage.getItem('lastFlowchartPrompt') || '';
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 pointer-events-none">
       <motion.div 
         drag
         dragMomentum={false}
         onDragStart={() => setIsDragging(true)}
         onDragEnd={() => setIsDragging(false)}
         dragConstraints={{ left: -500, right: 500, top: -300, bottom: 300 }}
-        initial={{ scale: 0.95 }}
-        animate={{ scale: 1 }}
-        exit={{ scale: 0.95 }}
+        initial={{ scale: 0.95, y: 20, opacity: 0 }}
+        animate={{ scale: 1, y: 0, opacity: 1 }}
+        exit={{ scale: 0.95, y: 20, opacity: 0 }}
         style={{ x: position.x, y: position.y }}
         onDrag={(event, info) => {
           setPosition({
@@ -70,72 +100,65 @@ function EditPromptModal({ isOpen, onClose, initialPrompt = '', onSubmit }) {
             y: position.y + info.delta.y
           });
         }}
-        className="bg-white w-full max-w-2xl rounded-xl shadow-lg space-y-4 relative"
+        className="absolute top-20 right-8 w-96 pointer-events-auto"
       >
-        <div 
-          className="p-6 cursor-move bg-gradient-to-r from-blue-50 to-blue-100 rounded-t-xl"
-          onMouseDown={(e) => {
-            if (e.target === e.currentTarget) {
-              e.preventDefault();
-            }
-          }}
-        >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Wand2 className="text-blue-600" size={24} />
-              <h3 className="text-lg font-semibold text-gray-900">Create Flowchart</h3>
-            </div>
-            <button 
-              onClick={onClose}
-              className="p-2 hover:bg-blue-200/50 rounded-lg transition-colors"
-            >
-              <X size={20} />
-            </button>
-          </div>
-        </div>
-        
-        <div className="px-6 space-y-4">
-          <div className="space-y-4">
-            {savedPrompt && (
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <h4 className="font-medium text-blue-700 mb-2">Previous Flowchart Prompt:</h4>
-                <p className="text-blue-600">{savedPrompt}</p>
-              </div>
-            )}
-            <div className="space-y-2">
-              <h4 className="font-medium text-gray-700">Describe Your Flowchart:</h4>
-              <p className="text-gray-600 text-sm">
-                Tell me what kind of flowchart you want to create. Be as specific as possible.
-              </p>
-            </div>
-          </div>
-          <textarea
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            className="w-full h-32 p-4 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none"
-            placeholder="Example: Create a login flow with password reset steps and error handling..."
-            onClick={(e) => {
-              if (isDragging) {
+        <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+          <div 
+            className="p-4 cursor-move bg-gradient-to-r from-blue-50 to-blue-100 flex items-center justify-between"
+            onMouseDown={(e) => {
+              if (e.target === e.currentTarget) {
                 e.preventDefault();
               }
             }}
-          />
-        </div>
+          >
+            <div className="flex items-center gap-2">
+              <Wand2 className="text-blue-600" size={20} />
+              <h3 className="text-sm font-medium text-gray-900">Edit Flowchart</h3>
+            </div>
+            <button 
+              onClick={onClose}
+              className="p-1 hover:bg-blue-200/50 rounded-lg transition-colors"
+            >
+              <X size={16} />
+            </button>
+          </div>
 
-        <div className="p-6 bg-gray-50 rounded-b-xl flex justify-end gap-3">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={() => onSubmit(prompt)}
-            className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:shadow-md transition-all flex items-center gap-2"
-          >
-            <Wand2 size={18} />
-            Generate Flowchart
-          </button>
+          <div className="p-4">
+            <textarea
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              className="w-full h-24 p-3 text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none"
+              placeholder="Describe your changes (e.g., 'Add an error handling step after login', 'Change the decision diamond text to...', etc.)"
+              onClick={(e) => {
+                if (isDragging) {
+                  e.preventDefault();
+                }
+              }}
+              autoFocus
+            />
+
+            <div className="flex justify-end gap-2 mt-3">
+              <button
+                onClick={onClose}
+                className="px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  if (prompt.trim()) {
+                    onSubmit(prompt);
+                    setPrompt('');
+                  }
+                }}
+                disabled={!prompt.trim()}
+                className="px-3 py-1.5 text-sm bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5"
+              >
+                <Wand2 size={14} />
+                Apply Changes
+              </button>
+            </div>
+          </div>
         </div>
       </motion.div>
     </div>
@@ -222,8 +245,14 @@ function Toolbar({
           <span>Chat</span>
         </button>
 
-        <div className="relative">
-          <button onClick={() => setShowExportMenu(!showExportMenu)} className="p-2 hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-2 text-sm font-medium text-gray-600">
+        <div className="relative z-50">
+          <button 
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowExportMenu(!showExportMenu)
+            }} 
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-2 text-sm font-medium text-gray-600"
+          >
             <Download size={20} />
             <span>Export</span>
           </button>
@@ -244,6 +273,7 @@ export function FlowchartViewer({ code, config, onBack, onChange }) {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [startPan, setStartPan] = useState({ x: 0, y: 0 });
   const [scale, setScale] = useState(1);
+  const [showExportMenu, setShowExportMenu] = useState(false);
   const [showGrid, setShowGrid] = useState(false);
   const [selectedNode, setSelectedNode] = useState(null);
   const [showSummary, setShowSummary] = useState(false);
@@ -260,15 +290,29 @@ export function FlowchartViewer({ code, config, onBack, onChange }) {
   const [showChat, setShowChat] = useState(false);
   const [showEditPrompt, setShowEditPrompt] = useState(false);
   const [currentPrompt, setCurrentPrompt] = useState('');
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showExportMenu) {
+        setShowExportMenu(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [showExportMenu]);
 
   const handleEditPrompt = async (prompt) => {
     try {
       const requestBody = { 
         prompt,
-        config
+        config,
+        type: 'edit',
+        currentFlowchart: code
       };
       
-      console.log('Edit prompt request:', requestBody);
+      console.log('Edit request:', requestBody);
 
       const response = await fetch('/api/generate-flowchart', {
         method: 'POST',
@@ -276,30 +320,33 @@ export function FlowchartViewer({ code, config, onBack, onChange }) {
         body: JSON.stringify(requestBody)
       });
 
-      if (!response.ok) throw new Error('Failed to generate flowchart');
       const data = await response.json();
-      console.log('Response data:', data);
       
-      if (data.error) throw new Error(data.error);
+      if (!response.ok || data.error) {
+        throw new Error(data.error || 'Failed to edit flowchart');
+      }
+
       if (data.mermaidCode) {
         onChange(data.mermaidCode);
         setLastUpdate(Date.now());
         localStorage.setItem('lastFlowchartPrompt', prompt);
-        toast.success('Flowchart generated successfully!');
+        toast.success('Flowchart updated successfully!');
         setShowEditPrompt(false);
+      } else {
+        throw new Error('No valid flowchart code received');
       }
     } catch (error) {
-      console.error('Failed to generate flowchart:', error);
-      toast.error('Failed to generate flowchart');
+      console.error('Failed to edit flowchart:', error);
+      toast.error(error.message || 'Failed to edit flowchart');
     }
   };
-
   useEffect(() => {
     const savedPrompt = localStorage.getItem('lastFlowchartPrompt');
     if (savedPrompt) {
       setCurrentPrompt(savedPrompt);
     }
   }, []);
+
   const generateSummary = async () => {
     if (!code) return;
     setSummaryLoading(true);
@@ -375,26 +422,82 @@ export function FlowchartViewer({ code, config, onBack, onChange }) {
 
   const handleExport = async (format = 'svg') => {
     try {
-      const svgElement = containerRef.current?.querySelector('svg');
+      const svgElement = containerRef.current?.querySelector('.flowchart-wrapper svg');
       if (!svgElement) {
         toast.error('No flowchart to export');
         return;
       }
-      const { url, ext } = await downloadImage(svgElement, format);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `flowchart.${ext}`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-      toast.success(`Flowchart exported as ${ext.toUpperCase()}`);
+
+      const svgClone = svgElement.cloneNode(true);
+      svgClone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+      
+      // Get dimensions
+      const bbox = svgElement.getBoundingClientRect();
+      const width = Math.round(bbox.width);
+      const height = Math.round(bbox.height);
+      svgClone.setAttribute('width', width);
+      svgClone.setAttribute('height', height);
+
+      // SVG Export
+      if (format === 'svg') {
+        const svgData = new XMLSerializer().serializeToString(svgClone);
+        const blob = new Blob([svgData], { type: 'image/svg+xml' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'flowchart.svg';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        toast.success('Flowchart exported as SVG');
+        return;
+      }
+
+      // JPG Export
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = width;
+      canvas.height = height;
+
+      // Fill white background for JPG
+      ctx.fillStyle = 'white';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Convert SVG to Data URL
+      const svgData = new XMLSerializer().serializeToString(svgClone);
+      const svgBase64 = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
+      
+      // Create temp image to draw on canvas
+      const tempImg = document.createElement('img');
+      tempImg.onload = () => {
+        ctx.drawImage(tempImg, 0, 0);
+        // Convert to JPG
+        const jpgUrl = canvas.toDataURL('image/jpeg', 1.0);
+        const link = document.createElement('a');
+        link.href = jpgUrl;
+        link.download = 'flowchart.jpg';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        toast.success('Flowchart exported as JPG');
+      };
+      tempImg.src = svgBase64;
+
     } catch (error) {
       console.error('Export failed:', error);
       toast.error(`Failed to export as ${format.toUpperCase()}`);
     }
   };
 
+  const downloadFile = (url, filename) => {
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
   const handleMouseDown = (e) => {
     if (e.target.closest('.node') || e.target.closest('.toolbar')) return;
     if (e.button === 0) {
@@ -423,6 +526,7 @@ export function FlowchartViewer({ code, config, onBack, onChange }) {
       setScale(newScale);
     }
   };
+
   useEffect(() => {
     const element = containerRef.current;
     if (!element) return;
@@ -482,7 +586,6 @@ export function FlowchartViewer({ code, config, onBack, onChange }) {
 
     initializeMermaid();
   }, [code, config, lastUpdate]);
-
   return (
     <div className="relative">
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-7xl mx-auto p-4 space-y-4">
@@ -633,7 +736,6 @@ export function FlowchartViewer({ code, config, onBack, onChange }) {
             <EditPromptModal
               isOpen={showEditPrompt}
               onClose={() => setShowEditPrompt(false)}
-              initialPrompt={currentPrompt}
               onSubmit={handleEditPrompt}
             />
           )}

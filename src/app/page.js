@@ -2,6 +2,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, useAnimation } from 'framer-motion';
+import Footer from '@/components/flowchart/footer';
 import { ArrowRight, Workflow, Users, Code, Zap, LineChart, Star, Activity, ChevronRight } from 'lucide-react';
 
 const EnhancedFlowchartAnimation = () => {
@@ -615,6 +616,7 @@ const Home = () => {
           </motion.button>
         </div>
       </motion.div>
+      <Footer />
     </div>
   );
 };
