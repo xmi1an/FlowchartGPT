@@ -47,10 +47,7 @@ Ensure you have [MongoDB](https://www.mongodb.com/) installed and running on you
 ### 4. Set up environment variables:
 Create a `.env.local` file in the root directory and add the following variables:
 ```
-NEXT_PUBLIC_API_URL=http://localhost:3000/api
-MONGODB_URI=your_mongodb_connection_string
-NEXTAUTH_SECRET=your_nextauth_secret
-ANTHROPIC_API_KEY=your_anthropic_api_key
+OPENAI_API_KEY=your_openai_api_key
 ```
 
 ### 5. Run the development server:
