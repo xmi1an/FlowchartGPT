@@ -59,7 +59,27 @@ npm run dev
 
 ## Screenshots
 
-
+<div className="flex flex-col gap-4">
+  <div className="flex justify-between gap-4">
+    <img 
+      src="https://github.com/0xmetaschool/FlowchartGPT/blob/main/public/Screenshot%202025-01-02%20113546.png" 
+      alt="FlowchartGPT landing page" 
+      className="w-1/2 border-2 border-black"
+    />
+    <img 
+      src="https://github.com/0xmetaschool/FlowchartGPT/blob/main/public/Screenshot%202025-01-02%20113622.png" 
+      alt="FlowchartGPT prompting page" 
+      className="w-1/2 border-2 border-black"
+    />
+  </div>
+  <div className="flex justify-between gap-4">
+    <img 
+      src="https://github.com/0xmetaschool/FlowchartGPT/blob/main/public/Screenshot%202025-01-02%20113638.png" 
+      alt="FlowchartGPT playground page" 
+      className="w-1/2 border-2 border-black"
+    />
+  </div>
+</div>
 
 ## How to use the application
 
