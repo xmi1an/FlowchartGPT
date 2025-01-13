@@ -225,9 +225,9 @@ const MovingBackground = () => {
 
 const InteractiveGridBackground = () => {
   return (
-    <div className="absolute inset-0 overflow-hidden">
+    <div className="absolute inset-0 w-full h-full overflow-hidden">
       <div className="grid grid-cols-12 gap-4 w-full h-full">
-        {[...Array(144)].map((_, i) => (
+        {[...Array(60)].map((_, i) => (
           <motion.div
             key={i}
             whileHover={{ scale: 1.1, backgroundColor: "rgba(59, 130, 246, 0.1)" }}
@@ -250,20 +250,25 @@ const SlidingTestimonials = ({ testimonials }) => {
     return <div className="relative overflow-hidden h-96" />;
   }
 
+  // Create a triple array to ensure smooth infinite scroll
+  const tripleTestimonials = [...testimonials, ...testimonials, ...testimonials];
+
   return (
     <div className="relative overflow-hidden h-96">
       <motion.div
         className="absolute flex gap-8"
         animate={{
-          x: ['0%', '-100%'],
+          x: ['0%', '-50.33%']
         }}
         transition={{
           duration: 20,
           repeat: Infinity,
           ease: "linear",
+          repeatType: "loop"
         }}
+        style={{ width: '300%' }} // Set width to accommodate all testimonials
       >
-        {[...testimonials, ...testimonials].map((testimonial, index) => (
+        {tripleTestimonials.map((testimonial, index) => (
           <div
             key={index}
             className="w-96 bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
@@ -343,7 +348,7 @@ const FlowchartEducation = () => {
   ];
 
   return (
-    <div className="bg-gray-50 py-20 relative z-10">
+    <div className="bg-gray-50 py-10 relative z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-20">
           <h2 className="text-4xl font-bold text-center mb-8">What is a Flowchart?</h2>
@@ -448,7 +453,7 @@ const FlowchartEducation = () => {
           <div className="grid md:grid-cols-3 gap-8">
             {benefits.map((benefit, index) => (
               <motion.div key={index} initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} whileHover={{ y: -5 }} className="bg-white p-6 rounded-xl shadow-lg text-center">
-                <h3 className="text-lg font-semibold text-blue-600">{benefit}</h3>
+                <h3 className="text-lg font-semibold text-blue-600 ">{benefit}</h3>
               </motion.div>
             ))}
           </div>
@@ -528,7 +533,6 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white overflow-hidden relative">
       <MovingBackground />
-      <InteractiveGridBackground />
       <header className="bg-white/80 backdrop-blur-sm shadow-sm relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <h1 className="text-2xl font-bold text-gray-900">FlowchartGPT</h1>
@@ -538,28 +542,31 @@ const Home = () => {
         </div>
       </header>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 z-10">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>
-            <h1 className="text-6xl font-bold text-gray-900 mb-6">
-              FlowchartGPT
-              <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }} className="text-blue-600">.</motion.span>
-            </h1>
-            <p className="text-xl text-gray-600 mb-8">Transform your ideas into stunning flowcharts instantly with AI. Create professional diagrams in seconds, not hours.</p>
-            <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => router.push('/new')} className="bg-blue-600 text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-blue-700 transition-colors flex items-center gap-2">
-              Start Creating <ArrowRight size={20} />
-            </motion.button>
-          </motion.div>
+      <div className="relative w-full min-h-[calc(100vh-73px)] flex items-center px-4 sm:px-6 lg:px-8 z-10">
+        <InteractiveGridBackground />
+        <div className="max-w-7xl mx-auto w-full relative z-20">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>
+              <h1 className="text-6xl font-bold text-gray-900 mb-6">
+                FlowchartGPT
+                <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }} className="text-blue-600">.</motion.span>
+              </h1>
+              <p className="text-xl text-gray-600 mb-8">Transform your ideas into stunning flowcharts instantly with AI. Create professional diagrams in seconds, not hours.</p>
+              <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => router.push('/new')} className="bg-blue-600 text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-blue-700 transition-colors flex items-center gap-2">
+                Start Creating <ArrowRight size={20} />
+              </motion.button>
+            </motion.div>
 
-          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.2 }} className="relative">
-            <div className="bg-white rounded-2xl shadow-xl p-8">
-              <EnhancedFlowchartAnimation />
-            </div>
-          </motion.div>
+            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.2 }} className="relative">
+              <div className="bg-white rounded-2xl shadow-xl p-8">
+                <EnhancedFlowchartAnimation />
+              </div>
+            </motion.div>
+          </div>
         </div>
       </div>
 
-      <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="bg-blue-600 text-white py-16 relative z-10">
+      <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="w-full bg-blue-600 text-white py-16 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
@@ -575,7 +582,7 @@ const Home = () => {
         </div>
       </motion.div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative z-10">
+      <div className="max-w-7xl bg-gray-50 mx-auto px-4 sm:px-6 lg:px-8 py-20 relative z-10">
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-4xl font-bold text-center mb-16">
           Features that make us different
         </motion.h2>
@@ -592,7 +599,7 @@ const Home = () => {
         </div>
       </div>
 
-      <div className="bg-gray-50 py-20 relative z-10">
+      <div className="bg-gray-50 py-10 relative z-10 lg:pt-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-4xl font-bold text-center mb-16">
             What our users say
@@ -601,7 +608,9 @@ const Home = () => {
         </div>
       </div>
 
-      <FlowchartEducation />
+      <div className="relative z-10">
+        <FlowchartEducation />
+      </div>
 
       <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="bg-gradient-to-r from-blue-600 to-blue-700 text-white py-20 relative z-10">
         <div className="max-w-4xl mx-auto text-center px-4">

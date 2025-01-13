@@ -1,4 +1,3 @@
-// src/components/flowchart/SideSummary.js
 'use client';
 
 import { useState } from 'react';
@@ -6,6 +5,11 @@ import { ChevronDown, ChevronRight, Lightbulb, List, AlertCircle, X } from 'luci
 
 export function SideSummary({ summary, keyPoints, onClose }) {
   const [isExpanded, setIsExpanded] = useState(true);
+
+  // Helper function to clean step text by removing leading numbers
+  const cleanStepText = (step) => {
+    return step.replace(/^\d+\.\s*/, '');
+  };
 
   return (
     <div className="bg-white rounded-xl shadow-sm p-6 space-y-4 h-full">
@@ -41,7 +45,7 @@ export function SideSummary({ summary, keyPoints, onClose }) {
               {summary.split('\n').map((step, index) => (
                 <div key={index} className="flex items-start gap-2">
                   <span className="font-medium text-gray-900 min-w-[20px]">{index + 1}.</span>
-                  <p className="text-gray-600">{step}</p>
+                  <p className="text-gray-600">{cleanStepText(step)}</p>
                 </div>
               ))}
             </div>

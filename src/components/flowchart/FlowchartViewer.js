@@ -5,7 +5,7 @@ import mermaid from 'mermaid';
 import { 
   ZoomIn, ZoomOut, RotateCcw, Download, Grid, ArrowLeft, 
   Plus, Lightbulb, Code2, FileCode, Square, Circle, Diamond, 
-  Hexagon, X, MessageSquare, Terminal, Image, Wand2
+  Hexagon, X, MessageSquare, Terminal, Image, Wand2, Loader2
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -13,6 +13,15 @@ import { NodeEditor } from './NodeEditor';
 import { SideSummary } from './SideSummary';
 import { themeColors } from '@/utils/theme';
 import { ChatWidget } from './ChatWidget';
+
+const LoadingSpinner = () => {
+  return (
+    <div className="flex items-center gap-1.5">
+      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+    </div>
+  );
+};
+
 
 const nodeTypes = [
   { 
@@ -218,20 +227,24 @@ function Toolbar({
       </div>
 
       <div className="flex items-center gap-2">
-        <button onClick={onViewMermaid} disabled={syntaxLoading} className={`p-2 rounded-lg transition-colors flex items-center gap-2 text-sm font-medium ${showMermaidSyntax ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-100 text-gray-600'}`}>
-          <Code2 size={20} />
-          <span>Mermaid</span>
-        </button>
+      <button onClick={onViewMermaid} disabled={syntaxLoading} className={`p-2 rounded-lg transition-colors flex items-center gap-2 text-sm font-medium ${showMermaidSyntax ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-100 text-gray-600'}`}>
+    <Code2 size={20} />
+    <span>Mermaid</span>
+    {syntaxLoading && <LoadingSpinner />}
+  </button>
 
-        <button onClick={onViewPseudocode} disabled={pseudocodeLoading} className={`p-2 rounded-lg transition-colors flex items-center gap-2 text-sm font-medium ${showPseudocode ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-100 text-gray-600'}`}>
-          <Terminal size={20} />
-          <span>Pseudocode</span>
-        </button>
+  <button onClick={onViewPseudocode} disabled={pseudocodeLoading} className={`p-2 rounded-lg transition-colors flex items-center gap-2 text-sm font-medium ${showPseudocode ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-100 text-gray-600'}`}>
+    <Terminal size={20} />
+    <span>Pseudocode</span>
+    {pseudocodeLoading && <LoadingSpinner />}
+  </button>
 
-        <button onClick={onExplain} disabled={summaryLoading} className={`p-2 rounded-lg transition-colors flex items-center gap-2 text-sm font-medium ${showSummary ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-100 text-gray-600'}`}>
-          <Lightbulb size={20} />
-          <span>Summary</span>
-        </button>
+  <button onClick={onExplain} disabled={summaryLoading} className={`p-2 rounded-lg transition-colors flex items-center gap-2 text-sm font-medium ${showSummary ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-100 text-gray-600'}`}>
+    <Lightbulb size={20} />
+    <span>Summary</span>
+    {summaryLoading && <LoadingSpinner />}
+  </button>
+
 
         <div className="w-px h-6 bg-gray-200 mx-2" />
 
