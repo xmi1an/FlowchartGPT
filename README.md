@@ -6,7 +6,7 @@ Built with Next.js and modern AI technology, this open-source template helps dev
 
 ## Live Demo
 
-[https://flowchart-gpt.vercel.app/](https://flowchart-gpt-iota.vercel.app/)
+[https://flowchart-gpt-metachool.vercel.app/](https://flowchart-gpt-metachool.vercel.app/)
 
 ## Features
 
