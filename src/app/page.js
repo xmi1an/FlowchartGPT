@@ -625,7 +625,8 @@ const Home = () => {
           </motion.button>
         </div>
       </motion.div>
-   //   <Footer />
+  
+   {/* <Footer /> */}
     </div>
   );
 };
